@@ -13,7 +13,7 @@ public class ClientRepository  implements PanacheRepository<Client> {
         return find("""
                 (:email IS NULL OR LOWER(email) LIKE :email)
                 """,
-                Parameters.with("email", email)
+                Parameters.with("email", email != null ? email.toLowerCase() + "%" : null)
         ).list();
     }
 }

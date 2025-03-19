@@ -6,4 +6,7 @@ quarkus.datasource.jdbc.url = jdbc:postgresql://localhost:5432/hibernate_db
 quarkus.hibernate-orm.database.generation=drop-and-create
 
 mp.jwt.verify.issuer=http://localhost:5005
-smallrye.jwt.sign.key=1234
+mp.jwt.verify.publickey.location=publicKey.pem
+smallrye.jwt.sign.key.location=privateKey.pem
+
+quarkus.native.resources.includes=publicKey.pem

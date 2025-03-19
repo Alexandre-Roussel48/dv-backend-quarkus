@@ -11,7 +11,7 @@ import org.acme.application.service.SessionService;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@RolesAllowed("ADMIN")
+@RolesAllowed("ADMIN")
 public class SessionResource {
 
     private final SessionService sessionService;

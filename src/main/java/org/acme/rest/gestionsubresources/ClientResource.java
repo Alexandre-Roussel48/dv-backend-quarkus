@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@RolesAllowed("GESTION")
+@RolesAllowed("GESTION")
 public class ClientResource {
 
     private final ClientService clientService;

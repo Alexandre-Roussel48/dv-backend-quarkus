@@ -11,7 +11,7 @@ import org.acme.application.service.GameService;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@RolesAllowed("ADMIN")
+@RolesAllowed("ADMIN")
 public class GameResource {
 
     private final GameService gameService;

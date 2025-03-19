@@ -15,7 +15,7 @@ import org.acme.rest.adminsubresources.SessionResource;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@RolesAllowed("ADMIN")
+@RolesAllowed("ADMIN")
 public class AdminResource {
 
     private final ClientService clientService;
