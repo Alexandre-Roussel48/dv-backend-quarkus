@@ -106,8 +106,7 @@ WORKDIR /deployments
 # Install OpenSSL (Debian/Ubuntu-based package manager)
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Copy only the built application from the build stage
-COPY --from=build /workspace/build/quarkus-app/lib/ lib/
+# Copy the correct built application from the build stage
 COPY --from=build /workspace/build/*-runner.jar quarkus-app.jar
 
 # Expose the application port
