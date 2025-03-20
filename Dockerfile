@@ -93,6 +93,9 @@ COPY src src
 # Grant execution permission to the Gradle wrapper
 RUN chmod +x gradlew
 
+# Install OpenSSL (Debian/Ubuntu-based package manager)
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
     && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
 
@@ -107,9 +110,6 @@ FROM eclipse-temurin:21-jdk AS runtime
 ENV LANGUAGE='en_US:en'
 
 WORKDIR /deployments
-
-# Install OpenSSL (Debian/Ubuntu-based package manager)
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy the correct built application from the build stage
 COPY --from=build /workspace/build/*-runner.jar quarkus-app.jar
