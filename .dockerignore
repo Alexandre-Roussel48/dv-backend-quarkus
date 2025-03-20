@@ -4,3 +4,6 @@
 !build/lib/*
 !build/quarkus-app/*
 !src
+!gradle
+!gradlew
+!build.gradle
