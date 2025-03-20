@@ -89,6 +89,9 @@ COPY gradle gradle
 COPY build.gradle settings.gradle ./
 COPY ./src ./src
 
+USER root
+RUN microdnf install -y openssl
+
 # Generate RSA keys inside the container
 RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
     && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
