@@ -99,7 +99,7 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN openssl genpkey -algorithm RSA -out src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
     && openssl rsa -in src/main/resources/privateKey.pem -pubout -out src/main/resources/publicKey.pem
 
-RUN chmod 600 /src/main/resources/privateKey.pem /src/main/resources/publicKey.pem
+RUN chmod 600 src/main/resources/privateKey.pem src/main/resources/publicKey.pem
 
 # Build the application using the correct Quarkus command
 RUN ./gradlew build -Dquarkus.package.jar.type=uber-jar --no-daemon
