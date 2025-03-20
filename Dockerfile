@@ -93,6 +93,9 @@ COPY src src
 RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
     && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
 
+# Ensure correct permissions for keys
+RUN chmod 600 /src/main/resources/privateKey.pem /src/main/resources/publicKey.pem
+
 # Grant execution permission to the Gradle wrapper
 RUN chmod +x gradlew
 
@@ -121,9 +124,6 @@ USER 185
 # Set environment variables for Java
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
-
-# Ensure correct permissions for keys
-RUN chmod 600 /deployments/keys/privateKey.pem /deployments/keys/publicKey.pem
 
 # Entry point to run the Quarkus application
 ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
