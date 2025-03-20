@@ -78,6 +78,7 @@
 #   accessed directly. (example: "foo.example.com,bar.example.com")
 #
 ###
+
 # === Step 1: Build the Application ===
 FROM eclipse-temurin:21-jdk AS build
 
@@ -92,8 +93,8 @@ COPY src src
 # Grant execution permission to the Gradle wrapper
 RUN chmod +x gradlew
 
-# Build the application using Gradle
-RUN ./gradlew build -Dquarkus.package.type=fast-jar --no-daemon
+# Build the application using the correct Quarkus command
+RUN ./gradlew build -Dquarkus.package.jar.type=uber-jar --no-daemon
 
 # === Step 2: Create the Runtime Image ===
 FROM eclipse-temurin:21-jdk AS runtime
@@ -107,9 +108,7 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy only the built application from the build stage
 COPY --from=build /workspace/build/quarkus-app/lib/ lib/
-COPY --from=build /workspace/build/quarkus-app/*.jar ./
-COPY --from=build /workspace/build/quarkus-app/app/ app/
-COPY --from=build /workspace/build/quarkus-app/quarkus/ quarkus/
+COPY --from=build /workspace/build/*-runner.jar quarkus-app.jar
 
 # Expose the application port
 EXPOSE 8080
@@ -129,7 +128,7 @@ USER 185
 
 # Set environment variables for Java
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+ENV JAVA_APP_JAR="/deployments/quarkus-app.jar"
 
 # Entry point to run the Quarkus application
-ENTRYPOINT [ "/opt/java/openjdk/bin/java", "-jar", "/deployments/quarkus-run.jar" ]
+ENTRYPOINT [ "/opt/java/openjdk/bin/java", "-jar", "/deployments/quarkus-app.jar" ]
