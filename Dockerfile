@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/code-with-quarkus-jvm .
+# docker build -f src/main/docker/Dockerfile -t quarkus/code-with-quarkus-jvm .
 #
 # Then run the container using:
 #
@@ -78,21 +78,52 @@
 #   accessed directly. (example: "foo.example.com,bar.example.com")
 #
 ###
-FROM registry.access.redhat.com/ubi9/openjdk-21:1.21
+# === Step 1: Build the Application ===
+FROM registry.access.redhat.com/ubi9/openjdk-21:1.21 AS build
+
+WORKDIR /workspace
+
+# Copy Gradle wrapper and dependencies first (to leverage Docker caching)
+COPY gradlew gradlew
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+COPY src src
+
+# Generate RSA keys inside the container
+RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
+    && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
+
+# Grant execution permission to the Gradle wrapper
+RUN chmod +x gradlew
+
+# Build the application using Gradle
+RUN ./gradlew build -Dquarkus.package.type=fast-jar --no-daemon
+
+# === Step 2: Create the Runtime Image ===
+FROM registry.access.redhat.com/ubi9/openjdk-21:1.21 AS runtime
 
 ENV LANGUAGE='en_US:en'
 
+WORKDIR /deployments
 
-# We make four distinct layers so if there are application changes the library layers can be re-used
-COPY --chown=185 build/quarkus-app/lib/ /deployments/lib/
-COPY --chown=185 build/quarkus-app/*.jar /deployments/
-COPY --chown=185 build/quarkus-app/app/ /deployments/app/
-COPY --chown=185 build/quarkus-app/quarkus/ /deployments/quarkus/
+# Copy only the built application from the build stage
+COPY --from=build /workspace/build/quarkus-app/lib/ lib/
+COPY --from=build /workspace/build/quarkus-app/*.jar ./
+COPY --from=build /workspace/build/quarkus-app/app/ app/
+COPY --from=build /workspace/build/quarkus-app/quarkus/ quarkus/
 
+# Expose the application port
 EXPOSE 8080
+
+# Use non-root user for better security
 USER 185
+
+# Set environment variables for Java
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+# Ensure correct permissions for keys
+RUN chmod 600 /deployments/keys/privateKey.pem /deployments/keys/publicKey.pem
 
+# Entry point to run the Quarkus application
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
