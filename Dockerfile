@@ -87,16 +87,7 @@ WORKDIR /workspace
 COPY gradlew gradlew
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
-COPY ./src ./src
-
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
-
-# Generate RSA keys inside the container
-RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
-    && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
-
-# Ensure correct permissions for keys
-RUN chmod 600 /src/main/resources/privateKey.pem /src/main/resources/publicKey.pem
+COPY src src
 
 # Grant execution permission to the Gradle wrapper
 RUN chmod +x gradlew
@@ -111,6 +102,9 @@ ENV LANGUAGE='en_US:en'
 
 WORKDIR /deployments
 
+# Install OpenSSL (Debian/Ubuntu-based package manager)
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 # Copy only the built application from the build stage
 COPY --from=build /workspace/build/quarkus-app/lib/ lib/
 COPY --from=build /workspace/build/quarkus-app/*.jar ./
@@ -120,6 +114,16 @@ COPY --from=build /workspace/build/quarkus-app/quarkus/ quarkus/
 # Expose the application port
 EXPOSE 8080
 
+# Create directory for keys
+RUN mkdir -p /deployments/keys
+
+# Generate RSA keys inside the container
+RUN openssl genpkey -algorithm RSA -out /deployments/keys/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
+    && openssl rsa -in /deployments/keys/privateKey.pem -pubout -out /deployments/keys/publicKey.pem
+
+# Ensure correct permissions for keys
+RUN chmod 600 /deployments/keys/privateKey.pem /deployments/keys/publicKey.pem
+
 # Use non-root user for better security
 USER 185
 
@@ -128,4 +132,4 @@ ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=or
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
 # Entry point to run the Quarkus application
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+ENTRYPOINT [ "/opt/java/openjdk/bin/java", "-jar", "/deployments/quarkus-run.jar" ]
