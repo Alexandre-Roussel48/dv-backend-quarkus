@@ -93,6 +93,11 @@ COPY src src
 # Grant execution permission to the Gradle wrapper
 RUN chmod +x gradlew
 
+RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
+    && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
+
+RUN chmod 600 /src/main/resources/privateKey.pem /src/main/resources/publicKey.pem
+
 # Build the application using the correct Quarkus command
 RUN ./gradlew build -Dquarkus.package.jar.type=uber-jar --no-daemon
 
@@ -111,16 +116,6 @@ COPY --from=build /workspace/build/*-runner.jar quarkus-app.jar
 
 # Expose the application port
 EXPOSE 8080
-
-# Create directory for keys
-RUN mkdir -p /deployments/keys
-
-# Generate RSA keys inside the container
-RUN openssl genpkey -algorithm RSA -out /deployments/keys/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
-    && openssl rsa -in /deployments/keys/privateKey.pem -pubout -out /deployments/keys/publicKey.pem
-
-# Ensure correct permissions for keys
-RUN chmod 600 /deployments/keys/privateKey.pem /deployments/keys/publicKey.pem
 
 # Use non-root user for better security
 USER 185
