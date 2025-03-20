@@ -96,8 +96,8 @@ RUN chmod +x gradlew
 # Install OpenSSL (Debian/Ubuntu-based package manager)
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-RUN openssl genpkey -algorithm RSA -out /src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
-    && openssl rsa -in /src/main/resources/privateKey.pem -pubout -out /src/main/resources/publicKey.pem
+RUN openssl genpkey -algorithm RSA -out src/main/resources/privateKey.pem -pkeyopt rsa_keygen_bits:2048 \
+    && openssl rsa -in src/main/resources/privateKey.pem -pubout -out src/main/resources/publicKey.pem
 
 RUN chmod 600 /src/main/resources/privateKey.pem /src/main/resources/publicKey.pem
 
