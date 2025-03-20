@@ -94,7 +94,7 @@ COPY src src
 RUN chmod +x gradlew
 
 # Build the application using the correct Quarkus command
-RUN ./gradlew build
+RUN ./gradlew build -Dquarkus.package.jar.type=uber-jar --no-daemon
 
 # === Step 2: Create the Runtime Image ===
 FROM eclipse-temurin:21-jdk AS runtime
