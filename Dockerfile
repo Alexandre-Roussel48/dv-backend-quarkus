@@ -79,7 +79,7 @@
 #
 ###
 # === Step 1: Build the Application ===
-FROM registry.access.redhat.com/ubi9/openjdk-21:1.21 AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /workspace
 
@@ -106,7 +106,7 @@ RUN chmod +x gradlew
 RUN ./gradlew build -Dquarkus.package.type=fast-jar --no-daemon
 
 # === Step 2: Create the Runtime Image ===
-FROM registry.access.redhat.com/ubi9/openjdk-21:1.21 AS runtime
+FROM eclipse-temurin:21-jdk AS runtime
 
 ENV LANGUAGE='en_US:en'
 
