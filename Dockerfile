@@ -87,7 +87,7 @@ WORKDIR /workspace
 # Copy Gradle wrapper and dependencies first (to leverage Docker caching)
 COPY gradlew gradlew
 COPY gradle gradle
-COPY build.gradle settings.gradle ./
+COPY build.gradle settings.gradle gradle.properties ./
 COPY src src
 
 # Grant execution permission to the Gradle wrapper
