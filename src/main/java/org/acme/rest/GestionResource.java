@@ -59,8 +59,10 @@ public class GestionResource {
         List<DepositItemDTO> deposits
     ) {
         for (DepositItemDTO depositItemDTO : deposits) {
-            Long id = realgameService.createRealgame(depositItemDTO);
-            transactionService.createDepositTransaction(id);
+            for (int i=0; i<depositItemDTO.getQuantity(); i++) {
+                Long id = realgameService.createRealgame(depositItemDTO);
+                transactionService.createDepositTransaction(id);
+            }
         }
     }
 
