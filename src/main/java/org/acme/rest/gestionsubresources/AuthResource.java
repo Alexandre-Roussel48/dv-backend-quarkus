@@ -8,7 +8,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.acme.application.dto.UserDTO;
+import org.acme.application.dto.LoginUserDTO;
+import org.acme.application.dto.RegisterUserDTO;
 import org.acme.application.service.AuthService;
 
 import java.util.Map;
@@ -22,7 +23,7 @@ public class AuthResource {
     @Path("/login")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response login(UserDTO user) {
+    public Response login(LoginUserDTO user) {
         return authService.login(user)
                 .map(token -> Response.ok(Map.of("token", token)).build())
                 .orElse(Response.status(Response.Status.UNAUTHORIZED).build());
@@ -31,7 +32,7 @@ public class AuthResource {
     @Path("/register")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response register(UserDTO user) {
+    public Response register(RegisterUserDTO user) {
         return authService.register(user)
                 .map(token -> Response.status(Response.Status.CREATED).entity(Map.of("token", token)).build())
                 .orElse(Response.status(Response.Status.CONFLICT).entity("Email already exists").build());

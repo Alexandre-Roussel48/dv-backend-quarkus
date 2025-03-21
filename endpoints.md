@@ -141,14 +141,23 @@
 {
   "date": "date",
   "value": "number",
-  "type": "type"
+  "type": "Type{DEPOSIT, COMMISSION, SALE, PAY}"
 }
 ```
 
-## UserDTO
+## LoginUserDTO
 ```json
 {
   "email": "string",
   "password": "string"
+}
+```
+
+## RegisterUserDTO
+```json
+{
+  "email": "string",
+  "password": "string",
+  "role": "Role{GESTION, ADMIN}"
 }
 ```
