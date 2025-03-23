@@ -31,10 +31,10 @@ public class ClientResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createClient(
+    public IdClientDTO createClient(
             ClientDTO client
     ) {
-        clientService.createClient(client);
+        return clientService.createClient(client);
     }
 
     @PUT

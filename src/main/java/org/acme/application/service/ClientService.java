@@ -18,7 +18,7 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
     @Transactional
-    public void createClient(ClientDTO dto) {
+    public IdClientDTO createClient(ClientDTO dto) {
         Client client = new Client();
         client.setName(dto.getName());
         client.setSurname(dto.getSurname());
@@ -26,6 +26,8 @@ public class ClientService {
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setAddress(dto.getAddress());
         clientRepository.persist(client);
+
+        return getIdClientDTO(client);
     }
 
     @Transactional

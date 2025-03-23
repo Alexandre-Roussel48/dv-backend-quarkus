@@ -148,7 +148,7 @@
 ## LoginUserDTO
 ```json
 {
-  "email": "string",
+  "email": "bite",
   "password": "string"
 }
 ```
