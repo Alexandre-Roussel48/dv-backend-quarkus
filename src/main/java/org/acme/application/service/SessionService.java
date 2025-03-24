@@ -23,6 +23,8 @@ public class SessionService {
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setBeginDate(session.getBeginDate());
         sessionDTO.setEndDate(session.getEndDate());
+        sessionDTO.setCommission(session.getCommission());
+        sessionDTO.setFees(session.getFees());
         return sessionDTO;
     }
 
