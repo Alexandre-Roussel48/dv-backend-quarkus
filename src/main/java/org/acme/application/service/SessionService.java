@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.acme.application.dto.IdSessionDTO;
 import org.acme.application.dto.SessionDTO;
 import org.acme.domain.model.Session;
 import org.acme.domain.repository.SessionRepository;
@@ -57,9 +58,10 @@ public class SessionService {
         }
     }
 
-    public List<SessionDTO> getSessions() {
+    public List<IdSessionDTO> getSessions() {
         return sessionRepository.findAll().stream().map((session -> {
-            SessionDTO sessionDTO = new SessionDTO();
+            IdSessionDTO sessionDTO = new IdSessionDTO();
+            sessionDTO.setId(session.id);
             sessionDTO.setBeginDate(session.getBeginDate());
             sessionDTO.setEndDate(session.getEndDate());
             sessionDTO.setCommission(session.getCommission());

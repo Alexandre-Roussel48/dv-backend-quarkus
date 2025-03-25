@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-@RolesAllowed("GESTION")
+@RolesAllowed({"GESTION", "ADMIN"})
 public class GestionResource {
 
     private final SessionService sessionService;
@@ -34,7 +34,7 @@ public class GestionResource {
 
     @GET
     @Path("/sessions")
-    public List<SessionDTO> getSessions() {
+    public List<IdSessionDTO> getSessions() {
         return sessionService.getSessions();
     }
 

@@ -10,7 +10,7 @@ import org.acme.application.service.TransactionService;
 
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-@RolesAllowed("GESTION")
+@RolesAllowed({"GESTION", "ADMIN"})
 public class TotalResource {
 
     private final TransactionService transactionService;
