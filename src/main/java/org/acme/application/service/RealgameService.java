@@ -67,11 +67,14 @@ public class RealgameService {
 
     @Transactional
     public Long createRealgame(DepositItemDTO dto) {
+        Session session = sessionRepository.findByDate(LocalDateTime.now())
+                .orElseThrow(() -> new NotFoundException("Opened session on " + LocalDateTime.now() + " not found"));
         Realgame realgame = new Realgame();
         realgame.setUnitPrice(dto.getUnitPrice());
         realgame.setStatus(Status.STOCK);
         realgame.setGame(gameRepository.findById(dto.getGame().getId()));
         realgame.setSeller(clientRepository.findById(dto.getClient().getId()));
+        realgame.setRelatedSession(session);
         realgame.persist();
 
         return realgame.id;
